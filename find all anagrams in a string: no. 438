@@ -1,0 +1,61 @@
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> result = new ArrayList<>();
+        // edge case
+        if(s.length() < p.length()){
+            return result;
+        }
+        // insert the frequency of each charcter of the pattern string p in a hashmap 
+        HashMap<Character, Integer> hmap = new HashMap<>();
+        for(int i = 0; i < p.length(); i++){
+            char ch = p.charAt(i);
+            hmap.put(ch, hmap.getOrDefault(ch, 0) + 1);
+        }
+        
+        //we need a counter to ensure all the characters of p string are either used or unused.
+        int count = hmap.size();
+        
+        // lets' have a start and end that form 2 ptrs of thw window;
+        int start = 0;
+        int end = 0;
+        
+        // let's form the windo by mpving end ptr
+        while(end < s.length()){
+            char eTemp = s.charAt(end);
+            
+            if(hmap.containsKey(eTemp)){
+                hmap.put(eTemp, hmap.get(eTemp) - 1);
+                // this means that we have satisifed the frequency of one character from the p string
+                if(hmap.get(eTemp) == 0){
+                    count--;
+                }
+            }
+            end++;
+            
+            // whenever the count becomes 0 it means that we have satisified all the frequencies of characters in p string
+            // now we need to store the index at which the anagram is found
+            // slide the window by incrementinh start
+            while(count == 0){
+                char sTemp = s.charAt(start);
+                if(hmap.containsKey(sTemp)){
+                    // we have un-used a char in p string by movign the window
+                    hmap.put(sTemp, hmap.get(sTemp) + 1);
+                    if(hmap.get(sTemp) > 0){
+                        count++;
+                    }
+                }
+                
+                if(end - start == p.length()){
+                    result.add(start);
+                }
+                start++;
+            }
+        }
+        return result;
+    }
+}
+
+
+
+
+https://leetcode.com/problems/find-all-anagrams-in-a-string/discuss/92007/Sliding-Window-algorithm-template-to-solve-all-the-Leetcode-substring-search-problem.
